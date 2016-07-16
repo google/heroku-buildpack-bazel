@@ -69,8 +69,6 @@ ${BAZEL} clean
 ${BAZEL} build -c opt $(cat build_path)
 
 pwd
-ls -l
-file -L blaze-bin
-ls -l blaze-bin
+ls -l | grep "blaze-bin" | sed 's/.* -> //'
 
 cp ${BUILD_DIR}/blaze-bin/$(cat build_path | sed 's/:/\//') $BUILD_DIR
