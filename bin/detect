@@ -1,0 +1,10 @@
+#!/bin/sh
+
+# check for a WORKSPACE file and a BUILD file
+if [ -f $1/WORKSPACE ] && [ -f $1/BUILD ] && [ -f $1/build_path ]; then
+  echo "Bazel"
+  exit 0
+else 
+  echo "not Bazel"
+  exit 1
+fi

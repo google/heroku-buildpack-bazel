@@ -1,0 +1,69 @@
+#!/usr/bin/env bash
+# bin/compile <build-dir> <cache-dir> <env-dir>
+
+indent() {
+  sed -u 's/^/       /'
+}
+
+# fail fast
+set -e
+
+# parse args
+BUILD_DIR=$1
+CACHE_DIR=$2
+ENV_DIR=$3
+
+PWD=$(cd $(dirname $0)/..; pwd) # absolute path
+
+if [ ! -v BAZEL_VERSION ]; then
+  BAZEL_VERSION="0.3.0"
+fi
+
+# install Java 1.8
+JVM_COMMON_BUILDPACK=${JVM_COMMON_BUILDPACK:-"https://codon-buildpacks.s3.amazonaws.com/buildpacks/heroku/jvm-common.tgz"}
+mkdir -p /tmp/jvm-common
+curl --retry 3 --silent --location $JVM_COMMON_BUILDPACK | tar xzm -C /tmp/jvm-common --strip-components=1
+. /tmp/jvm-common/bin/util
+. /tmp/jvm-common/bin/java
+
+install_java_with_overlay ${BUILD_DIR}
+
+export JAVA_HOME="${BUILD_DIR}/.jdk"
+
+if [ ! -d $2 ]; then
+  mkdir $2
+fi
+
+# Fetch the Bazel installer
+URL=https://github.com/bazelbuild/bazel/releases/download/${BAZEL_VERSION}/bazel-${BAZEL_VERSION}-installer-linux-x86_64.sh
+echo "-----> Downloading bazel from $URL"
+export BAZEL_INSTALLER=${CACHE_DIR}/install.sh
+curl -L -o ${BAZEL_INSTALLER} ${URL}
+if [ $? -ne 0 ]; then
+  echo "download failed"
+  exit 1
+fi
+
+BASE="${BUILD_DIR}/bazel"
+
+if ! [ echo $PATH | grep -q "${BASE}" ]; then
+  PATH=${BASE}:$PATH
+  export PATH
+fi
+
+# Install bazel inside ${BASE}
+echo "installing bazel" | indent
+bash "${BAZEL_INSTALLER}" \
+  --base="${BASE}" \
+  --bazelrc="${HOME}/bazel.bazelrc" \
+  --bin="${BASE}/binary"
+
+mkdir ${BUILD_DIR}/output
+
+echo -e "\nstartup --batch --output_base=${BUILD_DIR}/output" >> $BUILD_DIR/bazel.bazelrc
+echo -e "\nbuild --spawn_strategy=standalone --genrule_strategy=standalone" >> $BUILD_DIR/bazel.bazelrc
+
+BAZEL="${BASE}/binary/bazel --bazelrc=${BUILD_DIR}/bazel.bazelrc"
+cd $BUILD_DIR
+${BAZEL} clean
+${BAZEL} build --nobuild_runfile_links $(cat build_path)
