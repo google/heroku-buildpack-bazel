@@ -66,4 +66,6 @@ echo -e "\nbuild --spawn_strategy=standalone --genrule_strategy=standalone" >> $
 BAZEL="${BASE}/binary/bazel --bazelrc=${BUILD_DIR}/bazel.bazelrc"
 cd $BUILD_DIR
 ${BAZEL} clean
-${BAZEL} build --nobuild_runfile_links $(cat build_path)
+${BAZEL} build -c opt --nobuild_runfile_links $(cat build_path)
+
+cp blaze-bin/$(cat build_path | sed 's/:/\//') $BUILD_DIR
