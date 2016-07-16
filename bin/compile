@@ -69,6 +69,7 @@ ${BAZEL} clean
 ${BAZEL} build -c opt $(cat build_path)
 
 pwd
+ls -l
 ls -l | grep "blaze-bin"
 ls -l | grep "blaze-bin" | sed 's/.* -> //'
 
