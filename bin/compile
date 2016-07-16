@@ -60,7 +60,7 @@ bash "${BAZEL_INSTALLER}" \
 
 mkdir ${BUILD_DIR}/output
 
-echo -e "\nstartup --batch --output_base=${BUILD_DIR}/output" >> $BUILD_DIR/bazel.bazelrc
+echo -e "\nstartup --batch" >> $BUILD_DIR/bazel.bazelrc
 echo -e "\nbuild --spawn_strategy=standalone --genrule_strategy=standalone" >> $BUILD_DIR/bazel.bazelrc
 
 BAZEL="${BASE}/binary/bazel --bazelrc=${BUILD_DIR}/bazel.bazelrc"
@@ -68,4 +68,4 @@ cd $BUILD_DIR
 ${BAZEL} clean
 ${BAZEL} build -c opt --nobuild_runfile_links $(cat build_path)
 
-cp blaze-bin/$(cat build_path | sed 's/:/\//') $BUILD_DIR
+cp ${BUILD_DIR}/blaze-bin/$(cat build_path | sed 's/:/\//') $BUILD_DIR
