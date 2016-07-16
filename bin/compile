@@ -70,7 +70,7 @@ ${BAZEL} build -c opt $(cat build_path)
 
 pwd
 ls -l
-ls -l | grep "blaze-bin"
-ls -l | grep "blaze-bin" | sed 's/.* -> //'
+ls -l | grep "bazel-bin"
+ls -l | grep "bazel-bin" | sed 's/.* -> //'
 
 cp ${BUILD_DIR}/blaze-bin/$(cat build_path | sed 's/:/\//') $BUILD_DIR
