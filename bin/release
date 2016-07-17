@@ -4,5 +4,5 @@
 cat << EOF
 ---
 default_process_types:
-  web: ./jdk/bin/java -jar app.jar
+  web: .jdk/bin/java -jar app.jar
 EOF
