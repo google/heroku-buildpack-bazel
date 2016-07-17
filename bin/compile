@@ -69,8 +69,6 @@ ${BAZEL} clean
 ${BAZEL} build -c opt $(cat build_path)
 
 pwd
-ls -l
-ls -l | grep "bazel-bin"
-ls -l | grep "bazel-bin" | sed 's/.* -> //'
+BAZEL_BIN=$(ls -l | grep "bazel-bin" | sed 's/.* -> //')
 
-cp ${BUILD_DIR}/blaze-bin/$(cat build_path | sed 's/:/\//') $BUILD_DIR
+cp ${BAZEL_BIN}/$(cat build_path | sed 's/:/\//') $BUILD_DIR/app.jar
