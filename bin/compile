@@ -71,5 +71,5 @@ ${BAZEL} build -c opt $(cat build_path)
 BAZEL_BIN=$(ls -l | grep "bazel-bin" | sed 's/.* -> //')
 
 cp ${BAZEL_BIN}/$(cat build_path | sed 's/:/\//') $BUILD_DIR/app.jar
-blaze clean
+bazel clean
 rm -rf ${BUILD_DIR}/bazel
