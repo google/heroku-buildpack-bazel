@@ -1,6 +1,8 @@
 #!/bin/sh
+# bin/detect <build_dir>
 
-# check for a WORKSPACE file and a BUILD file
+# check for top level BUILD and WORKSPACE files. Also, we need a
+# build_path that provides the bazel path to the app's deploy jar.
 if [ -f $1/WORKSPACE ] && [ -f $1/BUILD ] && [ -f $1/build_path ]; then
   echo "Bazel"
   exit 0

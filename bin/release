@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 # bin/release <build-dir>
 
+# We include the default Procfile here. It just runs the deploy jar we built and copied.
+
 cat << EOF
 ---
 default_process_types:

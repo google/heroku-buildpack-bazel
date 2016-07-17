@@ -13,8 +13,7 @@ BUILD_DIR=$1
 CACHE_DIR=$2
 ENV_DIR=$3
 
-PWD=$(cd $(dirname $0)/..; pwd) # absolute path
-
+# default to Bazel version 0.3.0
 if [ ! -v BAZEL_VERSION ]; then
   BAZEL_VERSION="0.3.0"
 fi
@@ -30,8 +29,9 @@ install_java_with_overlay ${BUILD_DIR}
 
 export JAVA_HOME="${BUILD_DIR}/.jdk"
 
-if [ ! -d $2 ]; then
-  mkdir $2
+# Create the CACHE_DIR if it doesn't exists.
+if [ ! -d ${CACHE_DIR} ]; then
+  mkdir ${CACHE_DIR}
 fi
 
 # Fetch the Bazel installer
@@ -47,6 +47,7 @@ fi
 BASE="${BUILD_DIR}/bazel"
 
 if ! [ echo $PATH | grep -q "${BASE}" ]; then
+  # update path if necessary
   PATH=${BASE}:$PATH
   export PATH
 fi
@@ -58,18 +59,22 @@ bash "${BAZEL_INSTALLER}" \
   --bazelrc="${HOME}/bazel.bazelrc" \
   --bin="${BASE}/binary"
 
-mkdir ${BUILD_DIR}/output
-
+# Custom bazelrc file for Docker
 echo -e "\nstartup --batch" >> $BUILD_DIR/bazel.bazelrc
 echo -e "\nbuild --spawn_strategy=standalone --genrule_strategy=standalone" >> $BUILD_DIR/bazel.bazelrc
 
+# Build app
 BAZEL="${BASE}/binary/bazel --bazelrc=${BUILD_DIR}/bazel.bazelrc"
 cd $BUILD_DIR
 ${BAZEL} clean
 ${BAZEL} build -c opt $(cat build_path)
 
+# Find absolute path to deploy jar. For whatever reason. Heroku doesn't like the bazel symlinks.
 BAZEL_BIN=$(ls -l | grep "bazel-bin" | sed 's/.* -> //')
 
+# Copy the deploy jar to the build directory
 cp ${BAZEL_BIN}/$(cat build_path | sed 's/:/\//') $BUILD_DIR/app.jar
+
+# Clean up other artifacts so that the slug is smaller
 ${BAZEL} clean
 rm -rf ${BUILD_DIR}/bazel
