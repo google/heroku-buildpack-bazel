@@ -54,6 +54,8 @@ curl --retry 3 --silent --location $JVM_COMMON_BUILDPACK \
 . /tmp/jvm-common/bin/util
 . /tmp/jvm-common/bin/java
 
+# Set this environment variable for Bazel, so it can use JDK 1.8.
+export JAVA_HOME="${BUILD_DIR}/.jdk"
 install_java_with_overlay ${BUILD_DIR} | indent
 echo "-----> Java 8 installed"
 
