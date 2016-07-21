@@ -88,13 +88,16 @@ bash "${BAZEL_INSTALLER}" \
   --base="${BASE}" \
   --bazelrc="${HOME}/bazel.bazelrc" \
   --bin="${BASE}/binary" | indent
+echo "-----> Bazel installed"
 
 # Custom bazelrc file for Docker
+echo "-----> configure Bazel"
 echo -e "\nstartup --batch" >> $BUILD_DIR/bazel.bazelrc
 echo -e "\nbuild --spawn_strategy=standalone --genrule_strategy=standalone" \
   >> $BUILD_DIR/bazel.bazelrc
 
 # Build app
+echo "-----> Building app"
 BAZEL="${BASE}/bin/bazel --bazelrc=${BUILD_DIR}/bazel.bazelrc"
 cd $BUILD_DIR
 ${BAZEL} clean
@@ -108,5 +111,6 @@ BAZEL_BIN=$(ls -l | grep "bazel-bin" | sed 's/.* -> //')
 cp ${BAZEL_BIN}/$(cat build_path | sed 's/:/\//') $BUILD_DIR/app.jar
 
 # Clean up other artifacts so that the slug is smaller
+echo "-----> Cleaning up build directory"
 ${BAZEL} clean
 rm -rf ${BUILD_DIR}/bazel
