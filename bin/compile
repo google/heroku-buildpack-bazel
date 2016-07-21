@@ -45,9 +45,9 @@ if [[ ! -v BAZEL_VERSION ]]; then
 fi
 
 # install Java 1.8
-echo "-----> Install Java 8"
 JVM_BUILDPACK="https://codon-buildpacks.s3.amazonaws.com/buildpacks/heroku/jvm-common.tgz"
 JVM_COMMON_BUILDPACK=${JVM_COMMON_BUILDPACK:-${JVM_BUILDPACK}}
+echo "-----> Install Java 8 from ${JVM_COMMON_BUILDPACK}"
 mkdir -p /tmp/jvm-common
 curl --retry 3 --silent --location $JVM_COMMON_BUILDPACK \
   | tar xzm -C /tmp/jvm-common --strip-components=1
@@ -95,7 +95,7 @@ echo -e "\nbuild --spawn_strategy=standalone --genrule_strategy=standalone" \
   >> $BUILD_DIR/bazel.bazelrc
 
 # Build app
-BAZEL="${BASE}/binary/bazel --bazelrc=${BUILD_DIR}/bazel.bazelrc"
+BAZEL="${BASE}/bin/bazel --bazelrc=${BUILD_DIR}/bazel.bazelrc"
 cd $BUILD_DIR
 ${BAZEL} clean
 ${BAZEL} build -c opt $(cat build_path)
