@@ -27,8 +27,9 @@
 # We circumvent this difficulty by building the deploy jar and copying that to
 # the build directory.
 
+# Indents all text by 8 spaces.
 indent() {
-  sed -u 's/^/       /'
+  sed -u "s/^/       /"
 }
 
 # fail fast
@@ -59,7 +60,7 @@ export JAVA_HOME="${BUILD_DIR}/.jdk"
 install_java_with_overlay ${BUILD_DIR} | indent
 echo "-----> Java 8 installed"
 
-# Create the CACHE_DIR if it doesn't exists.
+# Create the CACHE_DIR if it doesn't exist.
 if [[ ! -d ${CACHE_DIR} ]]; then
   mkdir ${CACHE_DIR}
 fi
