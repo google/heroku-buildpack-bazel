@@ -1,5 +1,7 @@
 # heroku-buildpack-bazel
-Heroku buildpack for bazel. Currenly, only Java is supported.
+Heroku buildpack for [Bazel](http://www.bazel.io). Currenly, only Java is supported.
+
+Bazel is an open-source build tool created by and for the engineers at Google.
 
 ## Required files
 1. `BUILD`
@@ -25,5 +27,5 @@ If you need custom JVM flags, you'll need to include a custom `Procfile` with yo
 
 ## Use this buildpack
 ```shell
-heroku buildpacks:set https://github.com/zhelu/heroku-buildpack-bazel
+heroku buildpacks:set https://github.com/google/heroku-buildpack-bazel
 ```
