@@ -40,6 +40,12 @@ BUILD_DIR=$1
 CACHE_DIR=$2
 ENV_DIR=$3
 
+if [ -d "$ENV_DIR" ]; then
+    for e in $(ls $ENV_DIR); do
+	export "$e=$(cat $ENV_DIR/$e)"
+    done
+fi
+
 # default to Bazel version 0.3.0
 if [[ ! -v BAZEL_VERSION ]]; then
   BAZEL_VERSION="0.3.0"
