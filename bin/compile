@@ -106,14 +106,15 @@ echo "-----> Building app"
 BAZEL="${BASE}/bin/bazel --bazelrc=${BUILD_DIR}/bazel.bazelrc"
 cd $BUILD_DIR
 ${BAZEL} clean
-${BAZEL} build -c opt $(cat "$BAZEL_BUILD_PATH")
+${BAZEL} build -c opt "$BAZEL_BUILD_PATH"
 
 # Find absolute path to deploy jar. For whatever reason. Heroku doesn't like the
 # Bazel symlinks.
 BAZEL_BIN=$(ls -l | grep "bazel-bin" | sed "s/.* -> //")
 
 # Copy the deploy jar to the build directory
-cp ${BAZEL_BIN}/$(cat "$BAZEL_BUILD_PATH" | sed "s/:/\//") $BUILD_DIR/app.jar
+JAR_PATH=$(echo "$BAZEL_BUILD_PATH" | sed "s/:/\//" | sed "s/\/\///")
+cp ${BAZEL_BIN}/${JAR_PATH} $BUILD_DIR/app.jar
 
 # Clean up other artifacts so that the slug is smaller
 echo "-----> Cleaning up build directory"
