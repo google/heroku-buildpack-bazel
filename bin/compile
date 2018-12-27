@@ -50,7 +50,7 @@ fi
 # install Java 1.8
 JVM_BUILDPACK="https://codon-buildpacks.s3.amazonaws.com/buildpacks/heroku/jvm-common.tgz"
 JVM_COMMON_BUILDPACK=${JVM_COMMON_BUILDPACK:-${JVM_BUILDPACK}}
-echo "-----> Install Java 8 from ${JVM_COMMON_BUILDPACK}"
+echo "-----> Installing Java 8 from ${JVM_COMMON_BUILDPACK}"
 mkdir -p /tmp/jvm-common
 curl --retry 3 --silent --location $JVM_COMMON_BUILDPACK \
   | tar xzm -C /tmp/jvm-common --strip-components=1
@@ -60,7 +60,7 @@ curl --retry 3 --silent --location $JVM_COMMON_BUILDPACK \
 # Set this environment variable for Bazel, so it can use JDK 1.8.
 export JAVA_HOME="${BUILD_DIR}/.jdk"
 install_java_with_overlay ${BUILD_DIR} | indent
-echo "-----> Java 8 installed"
+echo "-----> Installing Java 8: complete"
 
 # Create the CACHE_DIR if it doesn't exist.
 if [[ ! -d ${CACHE_DIR} ]]; then
@@ -93,20 +93,21 @@ bash "${BAZEL_INSTALLER}" \
   --base="${BASE}" \
   --bazelrc="${HOME}/bazel.bazelrc" \
   --bin="${BASE}/binary" | indent
-echo "-----> Bazel installed"
+echo "-----> Installing Bazel: complete"
 
 # Custom bazelrc file for Docker
-echo "-----> configure Bazel"
+echo "-----> Configuring Bazel"
 echo -e "\nstartup --batch" >> $BUILD_DIR/bazel.bazelrc
 echo -e "\nbuild --spawn_strategy=standalone --genrule_strategy=standalone" \
   >> $BUILD_DIR/bazel.bazelrc
 
 # Build app
-echo "-----> Building app"
+echo "-----> Building binary at $BAZEL_BUILD_PATH"
 BAZEL="${BASE}/bin/bazel --bazelrc=${BUILD_DIR}/bazel.bazelrc"
 cd $BUILD_DIR
 ${BAZEL} clean
-${BAZEL} build -c opt "$BAZEL_BUILD_PATH"
+${BAZEL} build "$BAZEL_BUILD_PATH"
+echo "-----> Building binary: complete"
 
 # Find absolute path to deploy jar. For whatever reason. Heroku doesn't like the
 # Bazel symlinks.
@@ -114,9 +115,11 @@ BAZEL_BIN=$(ls -l | grep "bazel-bin" | sed "s/.* -> //")
 
 # Copy the deploy jar to the build directory
 JAR_PATH=$(echo "$BAZEL_BUILD_PATH" | sed "s/:/\//" | sed "s/\/\///")
+echo "-----> Copying jar at $JAR_PATH"
 cp ${BAZEL_BIN}/${JAR_PATH} $BUILD_DIR/app.jar
+echo "-----> Copying jar: complete"
 
 # Clean up other artifacts so that the slug is smaller
-echo "-----> Cleaning up build directory"
+echo "-----> Cleaning up"
 ${BAZEL} clean
 rm -rf ${BUILD_DIR}/bazel
