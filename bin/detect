@@ -20,12 +20,11 @@
 # This scripts gets passed the build directory by the Heroku submit hook.
 # Its job is to detect whether or not there is a valid Bazel workspace.
 
-# Check for top level BUILD and WORKSPACE files. Also, we need a
-# build_path that provides the bazel path to the app's deploy jar.
-if [[ -f $1/WORKSPACE ]] && [[ -f $1/BUILD ]] && [[ -f $1/build_path ]]; then
-  echo "Bazel"
+# Check for top level WORKSPACE file.
+if [[ -f $1/WORKSPACE ]]; then
+  echo "Bazel project detected"
   exit 0
 else
-  echo "not Bazel"
+  echo "Not a Bazel project"
   exit 1
 fi
