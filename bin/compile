@@ -39,7 +39,7 @@ set -e
 BUILD_DIR=$1
 CACHE_DIR=$2
 ENV_DIR=$3
-BAZEL_BUILD_PATH=$(cat ${ENV_DIR}/BAZEL_BUILD_PATH)
+BAZEL_BUILD_PATH=$(cat ${ENV_DIR}/BAZEL_BUILD_PATH)_deploy.jar
 
 
 # default to Bazel version 0.3.0
@@ -101,7 +101,7 @@ echo "-----> Building binary at $BAZEL_BUILD_PATH"
 BAZEL="${BASE_PATH}/bin/bazel --bazelrc=${BUILD_DIR}/bazel.bazelrc"
 cd $BUILD_DIR
 ${BAZEL} clean
-${BAZEL} build "$BAZEL_BUILD_PATH"
+${BAZEL} build "${BAZEL_BUILD_PATH}"
 echo "-----> Building binary: complete"
 
 # Find absolute path to deploy jar. For whatever reason. Heroku doesn't like the
@@ -109,7 +109,7 @@ echo "-----> Building binary: complete"
 BAZEL_BIN=$(ls -l | grep "bazel-bin" | sed "s/.* -> //")
 
 # Copy the deploy jar to the build directory
-JAR_PATH=$(echo "$BAZEL_BUILD_PATH" | sed "s/:/\//" | sed "s/\/\///").jar
+JAR_PATH=$(echo "$BAZEL_BUILD_PATH" | sed "s/:/\//" | sed "s/\/\///")
 echo "-----> Copying jar at $JAR_PATH"
 cp ${BAZEL_BIN}/${JAR_PATH} $BUILD_DIR/app.jar
 echo "-----> Copying jar: complete"
