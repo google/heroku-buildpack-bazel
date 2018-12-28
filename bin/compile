@@ -78,21 +78,16 @@ if [[ $? -ne 0 ]]; then
   echo "download failed" >&2
   exit 1
 fi
+echo "-----> Downloading Bazel: complete"
 
-BASE="${BUILD_DIR}/bazel"
 
-if ! grep -q -e "${BASE}" "${PATH}"; then
-  # update path if necessary
-  PATH=${BASE}:$PATH
-  export PATH
-fi
 
-# Install Bazel inside ${BASE}
-echo "-----> Installing Bazel"
+# Install Bazel inside ${BASE_PATH}
+BASE_PATH="${BUILD_DIR}/bazel"
+echo "-----> Installing Bazel into $BASE_PATH"
 bash "${BAZEL_INSTALLER}" \
-  --base="${BASE}" \
-  --bazelrc="${HOME}/bazel.bazelrc" \
-  --bin="${BASE}/binary" | indent
+  --base="${BASE_PATH}" \
+  --bin="${BASE_PATH}/binary" | indent
 echo "-----> Installing Bazel: complete"
 
 # Custom bazelrc file for Docker
@@ -103,7 +98,7 @@ echo -e "\nbuild --spawn_strategy=standalone --genrule_strategy=standalone" \
 
 # Build app
 echo "-----> Building binary at $BAZEL_BUILD_PATH"
-BAZEL="${BASE}/bin/bazel --bazelrc=${BUILD_DIR}/bazel.bazelrc"
+BAZEL="${BASE_PATH}/bin/bazel --bazelrc=${BUILD_DIR}/bazel.bazelrc"
 cd $BUILD_DIR
 ${BAZEL} clean
 ${BAZEL} build "$BAZEL_BUILD_PATH"

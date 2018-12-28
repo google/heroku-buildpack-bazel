@@ -22,7 +22,7 @@
 
 # Check for top level WORKSPACE file.
 if [[ -f $1/WORKSPACE ]]; then
-  echo "Bazel project detected"
+  echo "Bazel"
   exit 0
 else
   echo "Not a Bazel project"
