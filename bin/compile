@@ -109,7 +109,7 @@ echo "-----> Building binary: complete"
 BAZEL_BIN=$(ls -l | grep "bazel-bin" | sed "s/.* -> //")
 
 # Copy the deploy jar to the build directory
-JAR_PATH=$(echo "$BAZEL_BUILD_PATH" | sed "s/:/\//" | sed "s/\/\///")
+JAR_PATH=$(echo "$BAZEL_BUILD_PATH" | sed "s/:/\//" | sed "s/\/\///").jar
 echo "-----> Copying jar at $JAR_PATH"
 cp ${BAZEL_BIN}/${JAR_PATH} $BUILD_DIR/app.jar
 echo "-----> Copying jar: complete"
