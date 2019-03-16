@@ -44,7 +44,7 @@ BAZEL_BUILD_PATH=$(cat ${ENV_DIR}/BAZEL_BUILD_PATH)_deploy.jar
 
 # default to Bazel version 0.3.0
 if [[ ! -v BAZEL_VERSION ]]; then
-  BAZEL_VERSION="0.14.0"
+  BAZEL_VERSION="0.23.2"
 fi
 
 # install Java 1.8
